@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/giftcard
+    username: giftcard
+    password: giftcard123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # TODO: Once you create your Application in Casdoor, it exposes a
+          # standard OIDC discovery doc at:
+          #   http://localhost:8000/.well-known/openid-configuration
+          # Point issuer-uri at Casdoor's base URL (or the org-specific issuer
+          # Casdoor gives you) and Spring will auto-fetch the public key to
+          # validate incoming JWTs. Alternatively use jwk-set-uri directly.
+          issuer-uri: http://localhost:8000
+
+casdoor:
+  base-url: http://localhost:8000
+  client-id: ca7dffdd24b1a85d3533
+  client-secret: 868928a7d7e84ab275576bdf2791c0eb386dbc99
+  redirect-uri: http://localhost:5173/callback
+
+# Mock vendor "base URLs" - not real, just used to namespace our mock clients
+vendors:
+  qwikgift:
+    base-url: https://api.qwikgift.mock/v1
+  giftbazaar:
+    base-url: https://giftbazaar.mock/api/v2

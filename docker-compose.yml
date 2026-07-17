@@ -1,0 +1,56 @@
+services:
+  # --- Casdoor's own database (stores users, orgs, apps) ---
+  casdoor-db:
+    image: mysql:8.0
+    container_name: casdoor-db
+    environment:
+      MYSQL_ROOT_PASSWORD: casdoor123
+      MYSQL_DATABASE: casdoor
+    volumes:
+      - casdoor-db-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-pcasdoor123",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  casdoor:
+    image: casbin/casdoor:latest
+    container_name: casdoor
+    depends_on:
+      casdoor-db:
+        condition: service_healthy
+    entrypoint: /bin/sh -c './server --createDatabase=true'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./casdoor/conf/app.conf:/conf/app.conf
+    restart: on-failure
+
+  # --- Your gift card platform's own database ---
+  app-db:
+    image: postgres:15
+    container_name: giftcard-app-db
+    environment:
+      POSTGRES_DB: giftcard
+      POSTGRES_USER: giftcard
+      POSTGRES_PASSWORD: giftcard123
+    ports:
+      - "5434:5434"
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+
+volumes:
+  casdoor-db-data:
+  app-db-data:
