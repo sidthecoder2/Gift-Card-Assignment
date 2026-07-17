@@ -34,8 +34,11 @@ This brings up three containers: `casdoor` (auth server, port 8000), `casdoor-db
 2. Create a new **Organization** (e.g. `giftcard-org`) for this platform's actual end users.
 3. Create a new **Application** (e.g. `giftcard-app`), linked to that organization (not `built-in`), with:
    - Redirect URI: `http://localhost:5173/callback`
-4. Copy the Application's **Client ID** and **Client Secret**.
-5. Paste them into:
+4. Simplify the Organization's signup/signin form to avoid email/phone verification friction (Casdoor's default SMTP config points to a placeholder host and isn't wired to send real codes):
+   - **Organizations** → your org → **Edit** → **Signup items**: keep only Username, Name (Display name), Password, Confirm password. Remove/uncheck Email and Phone (both require sending a verification code otherwise).
+   - **Signin items**: keep it to Username, Password, plus the built-in "Forgot password" and "Sign up" links.
+5. Copy the Application's **Client ID** and **Client Secret**.
+6. Paste them into:
    - `frontend/src/pages/Login.jsx` (`CLIENT_ID`)
    - `backend/src/main/resources/application.yml` (`casdoor.client-id`, `casdoor.client-secret`)
 
@@ -135,4 +138,5 @@ Three core tables:
 - **Vendor mock images** use color-coded placeholder graphics (branded colors, no real logos) rather than pulling actual Amazon/Flipkart brand assets, to avoid trademark concerns in a submitted assignment.
 - **Casdoor's `admin`/`123` account** is a `built-in`-organization administrator account, intentionally kept separate from this platform's own `giftcard-org` end users — Casdoor enforces this separation itself (an org-scoped Application will reject a `built-in` user, and vice versa), which surfaced during development and is treated here as correct, expected behavior rather than a bug.
 - **The app's Postgres container runs on a non-default port** (mapped away from 5432/5433) specifically to avoid colliding with locally-installed PostgreSQL instances (e.g. from pgAdmin) on the development machine — a purely local-environment consideration, not something a deployed instance would need.
+- **Signup/signin form fields were simplified** in Casdoor's Organization settings to Username/Name/Password (+ Confirm password) for signup, and Username/Password (+ Forgot password, Sign up links) for signin. Email and Phone fields were removed from the signup flow rather than configured, since Casdoor's default SMTP provider points to a non-existent placeholder host and doesn't send real verification codes out of the box — wiring up a real email provider (e.g. Gmail SMTP with an app password) was judged out of scope for what this assignment is actually testing (the OAuth flow itself, not email deliverability).
 - **Vendor failure simulation** is a hardcoded boolean flag in each mock client (`QwikGiftClient`, `GiftBazaarClient`) rather than randomized, so that the failover path can be deterministically demonstrated on demand.
