@@ -2,15 +2,26 @@ package com.giftcard.vendor;
 
 import com.giftcard.model.Vendor;
 
+import java.util.List;
+
 public interface VendorClient {
 
     Vendor getVendorName();
 
     /**
+     * MOCK of the vendor's "List Gift Cards" endpoint
+     * (QwikGift: GET /cards, GiftBazaar: GET /products).
+     */
+    List<VendorCardListItem> listCards();
+
+    /**
+     * MOCK of the vendor's "Get Gift Card Details" endpoint
+     * (QwikGift: GET /cards/{id}, GiftBazaar: GET /products/{sku}).
+     */
+    VendorCardDetail getCardDetail(String vendorProductId);
+
+    /**
      * Attempt to fulfill an order with this vendor.
-     * TODO: replace the hardcoded mock logic inside each implementation with
-     * whatever simulated behaviour you want (e.g. randomly fail 10% of the
-     * time to test your failover logic).
      */
     VendorOrderResult placeOrder(String vendorProductId, int denomination, String customerEmail, String requestId);
 }
