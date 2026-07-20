@@ -10,7 +10,7 @@ Three explicit constraints shaped my design:
 2. If a gift card is available from both vendors, prefer whichever gives the higher commission (face value − selling price).
 3. If the preferred vendor is out of stock or fails, silently retry the other vendor before failing the order.
 
-Authentication had to go through Casdoor specifically (not any auth provider of my choice), which was the one piece of this stack I hadn't used before.
+Authentication had to go through Casdoor specifically, which was the one piece of this stack I hadn't used before.
 
 ## Architecture
 
